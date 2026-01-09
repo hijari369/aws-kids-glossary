@@ -75,14 +75,15 @@
 
 <script>
   // 用語を増やすのはここだけ！
+  // ★ 追加：link を持たせて、クリックで詳細ページへ飛べるようにする
   const TERMS = [
-    { term:"EC2", cat:"コンピュータ", kid:"インターネット上で借りられる『パソコン』。電源ON/OFFもできる。", example:"ゲームサーバーやWebサイトを動かす", note:"例えるなら：レンタルPC" },
-    { term:"S3", cat:"保存", kid:"インターネット上の『大きな倉庫』。写真や動画やバックアップを入れる。", example:"画像置き場、ログ保存", note:"例えるなら：段ボール倉庫" },
-    { term:"VPC", cat:"ネットワーク", kid:"AWSの中に作る『自分専用の町（ネットの土地）』。道路（通信）を決められる。", example:"社内システム用の安全な場所を作る", note:"例えるなら：町づくり" },
-    { term:"IAM", cat:"セキュリティ", kid:"『だれが何していいか』を決めるカギ係。入っていい部屋を決める。", example:"S3を読める人/消せる人を分ける", note:"例えるなら：入館証" },
-    { term:"Security Group", cat:"セキュリティ", kid:"サーバーにつける『見張り番』。入っていい通信だけ通す。", example:"80番(HTTP)だけOKにする", note:"例えるなら：家のインターホン" },
-    { term:"NACL", cat:"ネットワーク", kid:"町の入口にある『門番ルール』。出入りをまとめてチェックする。", example:"サブネット全体の出入りルール", note:"例えるなら：町の関所" },
-    { term:"ALB", cat:"ネットワーク", kid:"お客さんを、空いてる店員（サーバー）に分ける『案内係』。", example:"アクセスを複数EC2に振り分け", note:"例えるなら：受付" },
+    { term:"EC2", link:"ec2.html", cat:"コンピュータ", kid:"インターネット上で借りられる『パソコン』。電源ON/OFFもできる。", example:"ゲームサーバーやWebサイトを動かす", note:"例えるなら：レンタルPC" },
+    { term:"S3", link:"s3.html", cat:"保存", kid:"インターネット上の『大きな倉庫』。写真や動画やバックアップを入れる。", example:"画像置き場、ログ保存", note:"例えるなら：段ボール倉庫" },
+    { term:"VPC", link:"vpc.html", cat:"ネットワーク", kid:"AWSの中に作る『自分専用の町（ネットの土地）』。道路（通信）を決められる。", example:"社内システム用の安全な場所を作る", note:"例えるなら：町づくり" },
+    { term:"IAM", link:"iam.html", cat:"セキュリティ", kid:"『だれが何していいか』を決めるカギ係。入っていい部屋を決める。", example:"S3を読める人/消せる人を分ける", note:"例えるなら：入館証" },
+    { term:"Security Group", link:"security-group.html", cat:"セキュリティ", kid:"サーバーにつける『見張り番』。入っていい通信だけ通す。", example:"80番(HTTP)だけOKにする", note:"例えるなら：家のインターホン" },
+    { term:"NACL", link:"nacl.html", cat:"ネットワーク", kid:"町の入口にある『門番ルール』。出入りをまとめてチェックする。", example:"サブネット全体の出入りルール", note:"例えるなら：町の関所" },
+    { term:"ALB", link:"alb.html", cat:"ネットワーク", kid:"お客さんを、空いてる店員（サーバー）に分ける『案内係』。", example:"アクセスを複数EC2に振り分ける", note:"例えるなら：受付" },
   ];
 
   let current = TERMS.slice();
@@ -103,6 +104,12 @@
     return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
   }
 
+  // ★追加：リンクが無い用語でも落ちないようにする（保険）
+  function safeLink(x){
+    // link があればそのページへ、無ければ何もしない（#）
+    return (x.link && typeof x.link === "string") ? x.link : "#";
+  }
+
   function render(){
     const q = document.getElementById('q').value.trim().toLowerCase();
     const list = (q==="")
@@ -119,7 +126,10 @@
     const rows = list.map(x => `
       <tr>
         <td style="width:180px;">
-          <div class="term">${escapeHtml(x.term)}</div>
+          <!-- ★変更：単語をクリックできるリンクにする -->
+          <div class="term">
+            <a href="${safeLink(x)}">${escapeHtml(x.term)}</a>
+          </div>
           <span class="tag">${escapeHtml(x.cat)}</span>
         </td>
         <td>
