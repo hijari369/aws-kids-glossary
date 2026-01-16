@@ -1,47 +1,81 @@
 <!doctype html>
+<!-- =========================================================
+① HTMLの宣言：このファイルはHTML（Webページ）です
+========================================================= -->
 <html lang="ja">
 <head>
+  <!-- =======================================================
+ ② head（ページの設定）
+    ├ 文字コード
+    ├ スマホ対応
+    └ デザイン（CSS）
+  ======================================================= -->
+
+  <!-- ├ 文字コード：日本語が文字化けしないようにする -->
   <meta charset="utf-8" />
+
+  <!-- ├ スマホ対応：スマホでも見やすい大きさで表示 -->
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- タブに出るページ名 -->
   <title>小学生向けAWS用語集（爆速）</title>
+
+  <!-- └ デザイン（CSS）：見た目を決める -->
   <style>
     body { margin:0; background:#f6f0c8; color:#000; font-family: "MS PGothic", "Hiragino Kaku Gothic ProN", system-ui, sans-serif; }
     a { color:#0000ee; }
     .wrap { display:flex; min-height:100vh; }
+
+    /* 左メニュー */
     .nav { width: 230px; padding: 14px 10px; border-right: 2px solid #000; background:#efe6a8; }
     .brand { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
     .small { font-size: 12px; }
     .box { border:2px solid #000; background:#fff6c9; padding:8px; margin:10px 0; }
     .btn { display:block; padding:6px 8px; margin:6px 0; border:2px solid #000; background:#fff; text-decoration:none; }
+
+    /* 右メイン画面 */
     .main { flex:1; padding: 14px; }
     .title { font-size: 26px; font-weight: 800; }
     .subtitle { margin-top:6px; font-size: 14px; }
     .search { width: 100%; max-width: 520px; font-size: 18px; padding: 8px; border:2px solid #000; }
+
+    /* 表 */
     table { border-collapse: collapse; width: 100%; max-width: 980px; margin-top: 12px; background:#fff; }
     th, td { border:2px solid #000; padding: 8px; vertical-align: top; }
     th { background:#efe6a8; }
     .term { font-weight: 800; font-size: 18px; }
     .tag { font-size: 12px; padding:2px 6px; border:2px solid #000; background:#fff6c9; display:inline-block; margin-left:6px; }
     .footer { margin-top: 14px; font-size: 12px; }
+
+    /* スマホ表示：縦に並べる */
     @media (max-width: 820px){
       .wrap { display:block; }
       .nav { width:auto; border-right:none; border-bottom:2px solid #000; }
     }
   </style>
 </head>
+
 <body>
+  <!-- =======================================================
+ ③ body（画面に見える部分）
+    ├ 左メニュー
+    └ 右メイン画面
+  ======================================================= -->
+
   <div class="wrap">
+    <!-- ├ 左メニュー -->
     <div class="nav">
       <div class="brand">小学生向けAWS用語集</div>
       <div class="small">（爆速・軽量モード）</div>
 
       <div class="box">
         <b>メニュー</b><br/>
-        <a class="btn" href="#top" onclick="showAll()">トップ</a>
-        <a class="btn" href="#terms" onclick="filterBy('カテゴリ','ネットワーク')">ネットワーク</a>
-        <a class="btn" href="#terms" onclick="filterBy('カテゴリ','セキュリティ')">セキュリティ</a>
-        <a class="btn" href="#terms" onclick="filterBy('カテゴリ','コンピュータ')">コンピュータ</a>
-        <a class="btn" href="#terms" onclick="filterBy('カテゴリ','保存')">保存（ストレージ）</a>
+        <!-- ボタンを押すとJavaScriptの関数が動く -->
+        <a class="btn" href="#top" onclick="showAll(); return false;">トップ（全部）</a>
+        <a class="btn" href="#terms" onclick="filterByCat('ネットワーク'); return false;">ネットワーク</a>
+        <a class="btn" href="#terms" onclick="filterByCat('セキュリティ'); return false;">セキュリティ</a>
+        <a class="btn" href="#terms" onclick="filterByCat('コンピュータ'); return false;">コンピュータ</a>
+        <a class="btn" href="#terms" onclick="filterByCat('保存'); return false;">保存（ストレージ）</a>
       </div>
 
       <div class="box">
@@ -54,12 +88,20 @@
       </div>
     </div>
 
+    <!-- └ 右メイン画面 -->
     <div class="main" id="top">
       <div class="title">AWS用語集（小学生でもわかる）</div>
       <div class="subtitle">検索してね（例：S3、VPC、IAM、EC2）</div>
-      <p><input class="search" id="q" placeholder="ここに入力→ すぐ探す" oninput="render()" /></p>
 
+      <!-- 検索欄：入力するたびに render() が動く -->
+      <p>
+        <input class="search" id="q" placeholder="ここに入力→ すぐ探す" oninput="render()" />
+      </p>
+
+      <!-- 表示件数など -->
       <div id="status"></div>
+
+      <!-- 用語の表を表示する場所（最初は空） -->
       <div id="terms"></div>
 
       <div class="footer">
@@ -68,80 +110,102 @@
     </div>
   </div>
 
-<script>
-  const TERMS = [
-    { term:"EC2", link:"ec2.html", cat:"コンピュータ", kid:"インターネット上で借りられる『パソコン』。電源ON/OFFもできる。", example:"ゲームサーバーやWebサイトを動かす", note:"例えるなら：レンタルPC" },
-    { term:"S3", link:"s3.html", cat:"保存", kid:"インターネット上の『大きな倉庫』。写真や動画やバックアップを入れる。", example:"画像置き場、ログ保存", note:"例えるなら：段ボール倉庫" },
-    { term:"VPC", link:"vpc.html", cat:"ネットワーク", kid:"AWSの中に作る『自分専用の町（ネットの土地）』。道路（通信）を決められる。", example:"社内システム用の安全な場所を作る", note:"例えるなら：町づくり" },
-    { term:"IAM", link:"iam.html", cat:"セキュリティ", kid:"『だれが何していいか』を決めるカギ係。入っていい部屋を決める。", example:"S3を読める人/消せる人を分ける", note:"例えるなら：入館証" },
-    { term:"Security Group", link:"security-group.html", cat:"セキュリティ", kid:"サーバーにつける『見張り番』。入っていい通信だけ通す。", example:"80番(HTTP)だけOKにする", note:"例えるなら：家のインターホン" },
-    { term:"NACL", link:"nacl.html", cat:"ネットワーク", kid:"町の入口にある『門番ルール』。出入りをまとめてチェックする。", example:"サブネット全体の出入りルール", note:"例えるなら：町の関所" },
-    { term:"ALB", link:"alb.html", cat:"ネットワーク", kid:"お客さんを、空いてる店員（サーバー）に分ける『案内係』。", example:"アクセスを複数EC2に振り分ける", note:"例えるなら：受付" },
-  ];
+  <!-- =======================================================
+ ④ JavaScript（動きの部分）
+    ├ 用語データ
+    ├ 検索処理
+    └ 表示処理
+  ======================================================= -->
+  <script>
+    // ├ 用語データ：用語を増やすならここに追加するだけ
+    const TERMS = [
+      { term:"EC2", link:"ec2.html", cat:"コンピュータ", kid:"インターネット上で借りられる『パソコン』。電源ON/OFFもできる。", example:"ゲームサーバーやWebサイトを動かす", note:"例えるなら：レンタルPC" },
+      { term:"S3", link:"s3.html", cat:"保存", kid:"インターネット上の『大きな倉庫』。写真や動画やバックアップを入れる。", example:"画像置き場、ログ保存", note:"例えるなら：段ボール倉庫" },
+      { term:"VPC", link:"vpc.html", cat:"ネットワーク", kid:"AWSの中に作る『自分専用の町（ネットの土地）』。道路（通信）を決められる。", example:"社内システム用の安全な場所を作る", note:"例えるなら：町づくり" },
+      { term:"IAM", link:"iam.html", cat:"セキュリティ", kid:"『だれが何していいか』を決めるカギ係。入っていい部屋を決める。", example:"S3を読める人/消せる人を分ける", note:"例えるなら：入館証" },
+      { term:"Security Group", link:"security-group.html", cat:"セキュリティ", kid:"サーバーにつける『見張り番』。入っていい通信だけ通す。", example:"80番(HTTP)だけOKにする", note:"例えるなら：家のインターホン" },
+      { term:"NACL", link:"nacl.html", cat:"ネットワーク", kid:"町の入口にある『門番ルール』。出入りをまとめてチェックする。", example:"サブネット全体の出入りルール", note:"例えるなら：町の関所" },
+      { term:"ALB", link:"alb.html", cat:"ネットワーク", kid:"お客さんを、空いてる店員（サーバー）に分ける『案内係』。", example:"アクセスを複数EC2に振り分ける", note:"例えるなら：受付" },
+    ];
 
-  let current = TERMS.slice();
+    // いま表示対象になっているリスト（カテゴリ絞り込みに使う）
+    let current = TERMS.slice();
 
-  function showAll(){
-    current = TERMS.slice();
-    document.getElementById('q').value = "";
+    // 安全のため：HTMLに変換するときに特殊文字を逃がす
+    function escapeHtml(s){
+      return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+
+    // link があるときだけリンクにする（無ければ # ）
+    function safeLink(x){
+      return (x.link && typeof x.link === "string") ? x.link : "#";
+    }
+
+    // ├（カテゴリ絞り込み）全部表示
+    function showAll(){
+      current = TERMS.slice();
+      document.getElementById('q').value = "";
+      render();
+    }
+
+    // ├（カテゴリ絞り込み）カテゴリで絞る
+    function filterByCat(cat){
+      current = TERMS.filter(x => x.cat === cat);
+      document.getElementById('q').value = "";
+      render();
+    }
+
+    // ├ 検索処理 ＆ └ 表示処理：画面を描き直す関数
+    function render(){
+      // ├ 検索処理：入力文字を取得
+      const q = document.getElementById('q').value.trim().toLowerCase();
+
+      // いま表示対象の current から探す（カテゴリ絞り込みと相性が良い）
+      const list = (q === "")
+        ? current
+        : current.filter(x =>
+            x.term.toLowerCase().includes(q) ||
+            x.cat.toLowerCase().includes(q) ||
+            x.kid.toLowerCase().includes(q)
+          );
+
+      // 件数表示
+      document.getElementById('status').innerHTML =
+        `<div class="box"><b>表示：</b> ${list.length} 件</div>`;
+
+      // └ 表示処理：表の行（rows）を作る
+      const rows = list.map(x => `
+        <tr>
+          <td style="width:180px;">
+            <div class="term">
+              <a href="${escapeHtml(safeLink(x))}">${escapeHtml(x.term)}</a>
+            </div>
+            <span class="tag">${escapeHtml(x.cat)}</span>
+          </td>
+          <td>
+            <b>小学生向け：</b> ${escapeHtml(x.kid)}<br/>
+            <b>たとえば：</b> ${escapeHtml(x.example)}<br/>
+            <b>たとえ：</b> ${escapeHtml(x.note)}
+          </td>
+        </tr>
+      `).join("");
+
+      // 表全体を描く（termsの箱に入れる）
+      document.getElementById('terms').innerHTML = `
+        <table>
+          <thead>
+            <tr><th>用語</th><th>説明</th></tr>
+          </thead>
+          <tbody>
+            ${rows || `<tr><td colspan="2">見つからなかった！別の言葉で検索してみてね。</td></tr>`}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // ページを開いた瞬間に最初の一覧を出す
     render();
-  }
-
-  function filterBy(key, value){
-    current = TERMS.filter(x => (key==="カテゴリ" ? x.cat===value : true));
-    document.getElementById('q').value = "";
-    render();
-  }
-
-  function escapeHtml(s){
-    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  }
-
-  function safeLink(x){
-    return (x.link && typeof x.link === "string") ? x.link : "#";
-  }
-
-  function render(){
-    const q = document.getElementById('q').value.trim().toLowerCase();
-    const list = (q==="")
-      ? current
-      : TERMS.filter(x =>
-          x.term.toLowerCase().includes(q) ||
-          x.cat.toLowerCase().includes(q) ||
-          x.kid.toLowerCase().includes(q)
-        );
-
-    document.getElementById('status').innerHTML =
-      `<div class="box"><b>表示：</b> ${list.length} 件</div>`;
-
-    const rows = list.map(x => `
-      <tr>
-        <td style="width:180px;">
-          <div class="term">
-            <a href="${safeLink(x)}">${escapeHtml(x.term)}</a>
-          </div>
-          <span class="tag">${escapeHtml(x.cat)}</span>
-        </td>
-        <td>
-          <b>小学生向け：</b> ${escapeHtml(x.kid)}<br/>
-          <b>たとえば：</b> ${escapeHtml(x.example)}<br/>
-          <b>たとえ：</b> ${escapeHtml(x.note)}
-        </td>
-      </tr>
-    `).join("");
-
-    document.getElementById('terms').innerHTML = `
-      <table>
-        <thead>
-          <tr><th>用語</th><th>説明</th></tr>
-        </thead>
-        <tbody>${rows || `<tr><td colspan="2">見つからなかった！別の言葉で検索してみてね。</td></tr>`}</tbody>
-      </table>
-    `;
-  }
-
-  render();
-</script>
+  </script>
 </body>
 </html>
 
