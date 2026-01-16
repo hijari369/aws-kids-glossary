@@ -26,13 +26,6 @@
     a { color:#0000ee; }
     .wrap { display:flex; min-height:100vh; }
 
-    /* 左メニュー */
-    .nav { width: 230px; padding: 14px 10px; border-right: 2px solid #000; background:#efe6a8; }
-    .brand { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-    .small { font-size: 12px; }
-    .box { border:2px solid #000; background:#fff6c9; padding:8px; margin:10px 0; }
-    .btn { display:block; padding:6px 8px; margin:6px 0; border:2px solid #000; background:#fff; text-decoration:none; }
-
     /* 右メイン画面 */
     .main { flex:1; padding: 14px; }
     .title { font-size: 26px; font-weight: 800; }
@@ -63,30 +56,6 @@
   ======================================================= -->
 
   <div class="wrap">
-    <!-- ├ 左メニュー -->
-    <div class="nav">
-      <div class="brand">小学生向けAWS用語集</div>
-      <div class="small">（爆速・軽量モード）</div>
-
-      <div class="box">
-        <b>メニュー</b><br/>
-        <!-- ボタンを押すとJavaScriptの関数が動く -->
-        <a class="btn" href="#top" onclick="showAll(); return false;">トップ（全部）</a>
-        <a class="btn" href="#terms" onclick="filterByCat('ネットワーク'); return false;">ネットワーク</a>
-        <a class="btn" href="#terms" onclick="filterByCat('セキュリティ'); return false;">セキュリティ</a>
-        <a class="btn" href="#terms" onclick="filterByCat('コンピュータ'); return false;">コンピュータ</a>
-        <a class="btn" href="#terms" onclick="filterByCat('保存'); return false;">保存（ストレージ）</a>
-      </div>
-
-      <div class="box">
-        <b>このサイトについて</b><br/>
-        むずかしいAWSを、<br/>小学生でもわかる言葉で！
-      </div>
-
-      <div class="footer">
-        ※見た目はレトロ風 / 中身は自作<br/>
-      </div>
-    </div>
 
     <!-- └ 右メイン画面 -->
     <div class="main" id="top">
