@@ -1,0 +1,51 @@
+<!-- ===================== iam.html ===================== -->
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IAMとは？｜小学生向けAWS</title>
+  <style>
+    body { background:#f6f0c8; font-family:"MS PGothic", "Hiragino Kaku Gothic ProN", system-ui, sans-serif; padding:20px; color:#000; }
+    .box { border:2px solid #000; background:#fff6c9; padding:14px; max-width:800px; }
+    a { color:#0000ee; }
+    .tag { font-size: 12px; padding:2px 6px; border:2px solid #000; background:#fff; display:inline-block; margin-left:6px; }
+    .mini { margin-top:10px; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<a href="index.html">← 用語集にもどる</a>
+
+<h1>IAM とは？ <span class="tag">セキュリティ</span></h1>
+
+<div class="box">
+  <p><b>ひとことで言うと：</b><br>
+  「だれが、なにをしていいか」を決める“カギ係（許可のルール）”</p>
+
+  <p><b>なにを決める？</b></p>
+  <ul>
+    <li>この人はS3を見ていい（読む）</li>
+    <li>この人はS3を消しちゃダメ</li>
+    <li>この人はEC2を起動していい</li>
+  </ul>
+
+  <p><b>たとえ話：</b><br>
+  学校の「入館証」みたいに、<br>
+  “入っていい部屋”と“ダメな部屋”が決まっているイメージ。</p>
+
+  <p><b>ポイント：</b></p>
+  <ul>
+    <li>必要な人にだけ、必要な権限だけ渡す（安全）</li>
+    <li>間違って消したり壊したりを防げる</li>
+    <li>人（ユーザー）だけじゃなく、ロボット（プログラム）にも権限を渡せる</li>
+  </ul>
+
+  <div class="mini">
+    <b>ミニクイズ：</b> IAMは「場所」？それとも「許可（カギ）」？<br>
+    → 答え：許可（カギ）
+  </div>
+</div>
+
+</body>
+</html>
